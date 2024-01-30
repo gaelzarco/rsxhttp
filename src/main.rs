@@ -30,25 +30,17 @@ fn handle_connection(mut stream: TcpStream) {
         .expect("TcpStream iterator is empty")
         .expect("Could not parse string");
 
-    if request_line == "GET / HTTP/1.1" {
-        let status_line = "HTTP/1.1 OK";
-        let contents = fs::read_to_string("src/hello.html").expect("Failed to open specified file");
-        let length = contents.len();
-
-        let response = format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
-
-        stream
-            .write_all(response.as_bytes())
-            .expect("Could not write stream");
+    let (status_line, filename) = if request_line == "GET / HTTP/1.1" {
+        ("HTTP/1.1 OK", "hello.html")
     } else {
-        let status_line = "HTTP/1.1 404 NOT FOUND";
-        let contents = fs::read_to_string("src/err.html").expect("Failed to open specified file");
-        let length = contents.len();
+        ("HTTP/1.1 404 NOT FOUND", "err.html")
+    };
+    let contents = fs::read_to_string(filename).expect("Failed to open specified file");
+    let length = contents.len();
 
-        let response = format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
+    let response = format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
 
-        stream
-            .write_all(response.as_bytes())
-            .expect("Could not write stream");
-    }
+    stream
+        .write_all(response.as_bytes())
+        .expect("Could not write stream");
 }
