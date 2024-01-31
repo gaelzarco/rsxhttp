@@ -9,7 +9,7 @@ use std::{
 
 fn main() {
     const HOST: &str = "127.0.0.1";
-    const PORT: &str = "5001";
+    const PORT: &str = "5000";
 
     let endpoint: String = HOST.to_owned() + ":" + PORT;
 
@@ -17,6 +17,8 @@ fn main() {
     // bind function returns an Error<T, E>
     // It can fail because some ports require admin access
     let listener = TcpListener::bind(endpoint.clone()).expect("Endpoint is not valid");
+
+    let pool = ThreadPool::new(4);
 
     for stream in listener.incoming() {
         let stream = stream.expect("Stream could not be parsed");
