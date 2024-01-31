@@ -18,7 +18,7 @@ fn main() {
     // It can fail because some ports require admin access
     let listener = TcpListener::bind(endpoint.clone()).expect("Endpoint is not valid");
 
-    let pool = ThreadPool::new(4);
+    let pool = ThreadPool::build(4);
 
     for stream in listener.incoming() {
         let stream = stream.expect("Stream could not be parsed");
